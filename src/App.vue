@@ -12,12 +12,6 @@ export default Vue.extend({
   name: 'App',
   components: {
     Quotes
-  },
-  async created() {
-    console.log('App.created()');
-    const res = await fetch('/api/graphql', { method: 'POST', body: JSON.stringify({ name: 'bjohnson.io' }) });
-    const text = await res.text();
-    console.log(text);
   }
 });
 </script>

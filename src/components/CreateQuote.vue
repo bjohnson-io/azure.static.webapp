@@ -23,24 +23,31 @@
 </template>
 
 <script lang="ts">
-import { Quote } from '@/types/quote';
 import Vue from 'vue';
+import { GQL } from '@/graphql/quotes';
 
 export default Vue.extend({
   name: 'CreateQuote',
-  props: {
-    addFunc: {
-      type: Function,
-      required: true
-    }
-  },
   data: () => ({
     source: '',
     text: ''
   }),
   methods: {
     async submitForm() {
-      this.addFunc(new Quote(this.source, this.text));
+      console.log('submitForm()');
+      const res = await this.$apollo.mutate({
+        mutation: GQL.MUTATION.CREATE_QUOTE,
+        variables: {
+          input: {
+            source: this.source,
+            text: this.text,
+          }
+        },
+        refetchQueries: [
+          { query: GQL.QUERY.LIST_QUOTES },
+        ]
+      });
+      console.log(res);
       this.source = '';
       this.text = '';
     }

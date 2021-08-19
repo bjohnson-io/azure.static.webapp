@@ -3,18 +3,19 @@
     <v-dialog />
     <h1>Quotes</h1>
     <hr />
-    <div v-for="q of quotes" :key="q.id" @click="confirmDelete(q)">
+    <div v-for="q of listQuotes" :key="q.id" @click="confirmDelete(q)">
       <p>{{ q.text }}</p>
       <p>
         - <em>{{ q.source }}</em>
       </p>
       <hr />
     </div>
-    <CreateQuote :addFunc="addQuote"/>
+    <CreateQuote/>
   </div>
 </template>
 
 <script lang="ts">
+import GQL from '@/graphql/quotes';
 import { Quote } from '@/types/quote';
 import Vue from 'vue';
 import CreateQuote from './CreateQuote.vue';
@@ -24,9 +25,11 @@ export default Vue.extend({
   components: {
     CreateQuote
   },
-  data: () => ({
-    quotes: [] as Quote[]
-  }),
+  apollo: {
+    listQuotes: {
+      query: GQL.QUERY.LIST_QUOTES
+    }
+  },
   methods: {
     confirmDelete(quote: Quote) {
       this.$modal.show('dialog', {
@@ -41,31 +44,23 @@ export default Vue.extend({
             title: 'Delete',
             handler: async () => {
               this.$modal.hide('dialog');
-              this.deleteQuote(quote);
+              await this.deleteQuote(quote);
             }
           }
         ]
       });
     },
-    deleteQuote(quote: Quote) {
-      Vue.set(this, 'quotes', this.quotes.filter(q => q.id !== quote.id));
-    },
-    addQuote(quote: Quote) {
-      quote.id = Date.now();
-      this.quotes.push(quote);
+    async deleteQuote({ id }: Quote) {
+      console.log(`deleteQuote(${id})`);
+      await this.$apollo.mutate({
+        mutation: GQL.MUTATION.DELETE_QUOTE,
+        variables: { id },
+        refetchQueries: [
+          { query: GQL.QUERY.LIST_QUOTES },
+        ]
+      });
     }
   },
-  watch: {
-    quotes() {
-      localStorage.setItem('quotes', JSON.stringify(this.quotes));
-    }
-  },
-  created() {
-    const cachedQuotes = localStorage.getItem('quotes');
-    if (cachedQuotes) {
-      Vue.set(this, 'quotes', JSON.parse(cachedQuotes));
-    }
-  }
 });
 </script>
 
