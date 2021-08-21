@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "swa": "cd api && yarn build && cd .. && yarn build && swa start dist --api api",
+    "swa": "yarn build && swa start dist --api api",
     "build": "vue-cli-service build --skip-plugins @vue/cli-plugin-eslint",
     "lint": "vue-cli-service lint"
   },
