@@ -13,14 +13,6 @@ export default Vue.extend({
   components: {
     Quotes
   },
-  async created() {
-    console.log('App.created()');
-    const res = await fetch('/api/graphql', { 
-      method: 'POST', 
-      body: JSON.stringify({ name: 'bjohnson.io' }) 
-    });
-    console.log(await res.text());
-  }
 });
 </script>
 
