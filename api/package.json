@@ -10,8 +10,10 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
+    "@typegoose/typegoose": "^8.2.0",
     "apollo-server-azure-functions": "^3.1.2",
-    "graphql": "^15.5.1"
+    "graphql": "^15.5.1",
+    "mongoose": "^6.0.2"
   },
   "devDependencies": {
     "@azure/functions": "^1.2.3",

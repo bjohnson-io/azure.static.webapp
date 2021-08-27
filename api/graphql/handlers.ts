@@ -1,45 +1,19 @@
-interface Quote {
-  id: string
-  source: string
-  text: string
+import { QuoteModel, Quote } from './models';
+
+export async function listQuotes() {
+  return await QuoteModel.find();
 }
 
-interface CreateQuoteInput {
-  source: string
-  text: string
+export async function createQuote(_parent: any, args: { input: Quote }) {
+  const quote = await QuoteModel.create(args.input);
+  console.log(quote);
+  return quote;
 }
 
-let quotes: Quote[] = [
-  {
-    id: '1629335698593',
-    source: 'Brian Johnson',
-    text: 'Wherever you go, there you are.'
-  },
-  {
-    id: '1629335712412',
-    source: 'Nancy Johnson',
-    text: 'Get off that damn computer!'
-  }
-];
-
-export function listQuotes(): Quote[] {
-  return quotes;
-}
-
-export function createQuote(_parent: any, args: { input: CreateQuoteInput }): Quote {
-  const newQuote: Quote = {
-    id: Date.now().toString(),
-    source: args.input.source,
-    text: args.input.text
-  }
-  quotes.push(newQuote);
-  return newQuote;
-}
-
-export function deleteQuote(_parent: any, args: { id: string }): Quote {
-  const quote = quotes.find(q => q.id === args.id);
+export async function deleteQuote(_parent: any, args: { id: string }) {
+  const quote = await QuoteModel.findById(args.id);
   if (quote) {
-    quotes = quotes.filter(q => q.id !== args.id);
+    await quote.delete();
     return quote;
   }
 }
